@@ -16,6 +16,7 @@ export interface Account {
   id: ID;
   name: string;
   currency: string; 
+  balance:number;
   createdAt: string;
   updatedAt: string;
 }

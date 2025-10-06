@@ -1,4 +1,3 @@
-import { STORAGE_AUTH_KEY } from "@/constants/db";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
@@ -11,7 +10,7 @@ export const api = axios.create({
 
 export async function initializeApi() {
   try {
-    const base = await AsyncStorage.getItem(STORAGE_AUTH_KEY);
+    const base = await AsyncStorage.getItem('baseURL');
     if (base) {
       api.defaults.baseURL = base;
     } else {

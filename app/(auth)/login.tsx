@@ -22,7 +22,6 @@ const Login = ({
 }) => {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(true);
   const [showPass, setShowPass] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
@@ -45,10 +44,10 @@ const Login = ({
     };
   }, [identifier, password]);
 
-  function onSubmit(data:any){
-    auth.log_in();
+  async function onSubmit(){
+    await auth.log_in();
+    router.replace("/(protected)/(tabs)");
   };
-  function onForgotPassword(d:any){};
 
   const handleSubmit = async () => {
     Keyboard.dismiss();
@@ -58,10 +57,6 @@ const Login = ({
     if (!onSubmit) {
       try {
         setSubmitting(true);
-        await new Promise((r) => setTimeout(r, 700));
-        if (!identifier.startsWith("demo") || password !== "demo123") {
-          throw new Error("Credenciales inválidas");
-        }
       } catch (e: any) {
         setLocalError(e?.message ?? "Algo salió mal");
       } finally {
@@ -72,6 +67,7 @@ const Login = ({
 
     try {
       setSubmitting(true);
+      await onSubmit();
     } catch (e: any) {
       setLocalError(e?.message ?? "No se pudo iniciar sesión");
     } finally {
@@ -85,7 +81,9 @@ const Login = ({
         <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss}>
           <View style={styles.container}>
             <View style={{ width: "100%" }}>
-              <Text style={styles.greet}>Bienvenido</Text>
+              <Text style={styles.greet}>
+                Hola de nuevo
+              </Text>
               <Text style={styles.subtitle}>Inicia sesión para continuar</Text>
             </View>
 

@@ -7,15 +7,15 @@ export default function RootLayout() {
     <AuthProvider>
       <StatusBar style="dark" />
       <Stack>
+        <Stack.Screen name="(auth)" options={{
+          headerShown:false
+        }}/>
         <Stack.Screen name='(protected)'
         options={{
           headerShown:false,
           animation:"fade"
         }}
         />
-        <Stack.Screen name="(auth)" options={{
-          headerShown:false
-        }}/>
         
       </Stack>
     </AuthProvider>

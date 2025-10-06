@@ -1,6 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import { STORAGE_AUTH_KEY } from "@/constants/db";
+import { SplashScreen } from "expo-router";
+
+SplashScreen.preventAutoHideAsync();
 
 type auth_state = {
   is_logged:boolean;
@@ -53,6 +56,7 @@ export function AuthProvider(props:PropsWithChildren){
         console.error("Error fetching from storage",e);
       };
       setIsReady(true);
+      SplashScreen.hideAsync();
     };
     ret();
   },[]);
