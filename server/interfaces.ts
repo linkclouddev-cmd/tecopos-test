@@ -16,7 +16,8 @@ export interface Account {
   id: ID;
   name: string;
   currency: string; 
-  balance:number;
+  balanceCents:number;
+  amountCents:number;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,43 +1,33 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, Pressable, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import AccountCard from '@/components/account/card';
-import { Account } from '@/server/interfaces';
 import { Octicons } from '@expo/vector-icons';
+import { useAccounts } from '@/stores/account.store';
+import { g_accounts } from '@/server/core.api';
 
-const api = {
-  async listAccounts(): Promise<Account[]> {
-    await new Promise((r) => setTimeout(r, 250));
-    const now = new Date().toISOString();
-    return [
-      { id: 1, name: 'Cuenta Corriente', currency: 'USD', balance: 125_000, createdAt: now, updatedAt: now },
-      { id: 2, name: 'Caja Ahorro', currency: 'ARS', balance: 3_000_00, createdAt: now, updatedAt: now },
-      { id: 3, name: 'Tarjeta', currency: 'USD', balance: -45_670, createdAt: now, updatedAt: now },
-      { id: 4, name: 'Efectivo', currency: 'USD', balance: 12_345, createdAt: now, updatedAt: now },
-    ];
-  },
-};
 
 export default function AccountsIndexScreen() {
   const router = useRouter();
-  const [accounts, setAccounts] = useState<Account[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const accounts = useAccounts().accounts;
 
   const load = useCallback(async () => {
-    setLoading(true);
-    const data = await api.listAccounts();
-    setAccounts(data);
-    setLoading(false);
+    await getd();
   }, []);
+
+  const {setA} = useAccounts();
+  async function getd(){
+      const {data} = await g_accounts(setLoading);
+      setA(data ?? []);
+      return data as any;
+  };
 
   useEffect(() => { load(); }, [load]);
 
   const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    const data = await api.listAccounts();
-    setAccounts(data);
-    setRefreshing(false);
+    await getd();
   }, []);
 
   const empty = useMemo(() => accounts.length === 0, [accounts]);
@@ -81,7 +71,11 @@ export default function AccountsIndexScreen() {
               <Text style={styles.emptyTitle}>Sin cuentas</Text>
               <Text style={styles.emptySub}>Toca ＋ para crear tu primera cuenta</Text>
             </View>
-          ) : null}
+          ) : (
+            <View style={styles.emptyState}>
+              <ActivityIndicator size={30} />
+            </View>
+          )}
           renderItem={({ item }) => (
             <AccountCard item={item} />
           )}

@@ -200,7 +200,9 @@ return Math.round(num * 100);
             disabled={!v.ok || saving}
             style={({ pressed }) => [styles.button, (!v.ok || saving) && styles.buttonDisabled, pressed && styles.pressed]}
           >
-            {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Create transaction</Text>}
+            
+          {saving ? <ActivityIndicator color="#fff" /> :
+            <Text style={styles.buttonText}>Añadir transacción</Text>}
           </Pressable>
         </ScrollView>
         </TouchableWithoutFeedback>

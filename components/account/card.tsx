@@ -61,7 +61,7 @@ const AccountCard: React.FC<{item:Account}> = (props:{item:Account}) => {
 </View>
 <View style={{display:"flex",flexDirection:"row",alignItems:"center",justifyContent:"space-between"}}>
       <Text style={{fontSize:15,color:"#fff"}}>
-        {props.item.balance}$
+        {props.item.amountCents}$
       </Text>
 </View>
     </View>

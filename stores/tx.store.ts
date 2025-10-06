@@ -7,7 +7,7 @@ interface TransactionsState {
   addManyT:(txs:Transaction[]) => void;
 };
 
-export const useAccounts = create<TransactionsState>()((set)=>({
+export const useTransactions = create<TransactionsState>()((set)=>({
   txs:[],
   addT(tx) {
     set((st)=>({txs:[...st.txs,tx]}));

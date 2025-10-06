@@ -2,9 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Account, SummaryResp, Transaction } from '@/server/interfaces';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { fmtMoney } from './account/details';
-const nowISO = () => new Date().toISOString();
 
 function isoRange(kind: 'MTD' | '30D' | 'YTD'): { from: string; to: string } {
   const now = new Date();
@@ -115,13 +113,13 @@ export default function HomeScreen() {
             ListHeaderComponent={
               <View style={styles.container}>
                 <View style={styles.rowWrap}>
-                  <Chip label="This month" selected={range === 'MTD'} onPress={() => setRange('MTD')} />
-                  <Chip label="Last 30 days" selected={range === '30D'} onPress={() => setRange('30D')} />
-                  <Chip label="Year to date" selected={range === 'YTD'} onPress={() => setRange('YTD')} />
+                  <Chip label="Este mes" selected={range === 'MTD'} onPress={() => setRange('MTD')} />
+                  <Chip label="Últimos 30 días" selected={range === '30D'} onPress={() => setRange('30D')} />
+                  <Chip label="Hace un año" selected={range === 'YTD'} onPress={() => setRange('YTD')} />
                 </View>
 
                 <View style={[styles.rowWrap, { marginTop: 8 }]}>
-                  <Chip label="All" selected={accountId === undefined} onPress={() => setAccountId(undefined)} />
+                  <Chip label="Todas" selected={accountId === undefined} onPress={() => setAccountId(undefined)} />
                   {accounts.map((a) => (
                     <Chip key={a.id} label={a.name} selected={accountId === a.id} onPress={() => setAccountId(a.id)} />
                   ))}

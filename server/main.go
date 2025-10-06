@@ -86,10 +86,6 @@ type Claims struct {
 }
 
 
-func me(c *gin.Context) uint {
-	v, _ := c.Get("uid")
-	return v.(uint)
-}
 
 func main() {
 	var err error

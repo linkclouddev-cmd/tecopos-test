@@ -1,43 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList,StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Octicons } from '@expo/vector-icons';
 import { Account, MoneyCents, Transaction } from '@/server/interfaces';
+import { useAccounts } from '@/stores/account.store';
+import { g_accounts_tx } from '@/server/core.api';
 
 export function fmtMoney(cents: MoneyCents, currency = 'USD', locale = 'es-ES') {
   try { return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(cents / 100); }
   catch { return `${(cents / 100).toFixed(2)} ${currency}`; }
 }
 
-const nowISO = () => new Date().toISOString();
-const MOCK: { accounts: Account[]; tx: Transaction[] } = {
-  accounts: [
-    { id: 1,balance:0, name: 'Cuenta Corriente', currency: 'USD', createdAt: nowISO(), updatedAt: nowISO() },
-    { id: 2, balance:0,name: 'Caja Ahorro', currency: 'ARS', createdAt: nowISO(), updatedAt: nowISO() },
-    { id: 3,balance:0, name: 'Tarjeta', currency: 'USD', createdAt: nowISO(), updatedAt: nowISO() },
-  ],
-  tx: [
-    { id: 1, accountId: 1, type: 'IN', amountCents: 250_000, description: 'Depósito', occurredAt: nowISO(), createdAt: nowISO(), updatedAt: nowISO() },
-    { id: 2, accountId: 1, type: 'OUT', amountCents: 30_500, description: 'Pago servicio', occurredAt: nowISO(), createdAt: nowISO(), updatedAt: nowISO() },
-    { id: 3, accountId: 1, type: 'OUT', amountCents: 4_999, description: 'Café', occurredAt: nowISO(), createdAt: nowISO(), updatedAt: nowISO() },
-  ],
-};
 
-const api = {
-  async getAccountWithBalance(id: ID): Promise<AccountWithBalance | null> {
-    await new Promise((r) => setTimeout(r, 200));
-    const a = MOCK.accounts.find((x) => x.id === id);
-    if (!a) return null;
-    const balance = MOCK.tx.filter((t) => t.accountId === id).reduce((s, t) => s + (t.type === 'IN' ? t.amountCents : -t.amountCents), 0);
-    return { ...a, balanceCents: balance };
-  },
-  async listTransactions(accountId: ID): Promise<Transaction[]> {
-    await new Promise((r) => setTimeout(r, 200));
-    return MOCK.tx
-      .filter((t) => t.accountId === accountId)
-      .sort((a, b) => Date.parse(b.occurredAt) - Date.parse(a.occurredAt));
-  },
-};
 
 function TxItem({ t, currency }: { t: Transaction; currency: string }) {
   const sign = t.type === 'IN' ? '+' : '\u2212'; 
@@ -63,14 +37,15 @@ export default function AccountDetailsScreen() {
   const [tx, setTx] = useState<Transaction[]>([]);
 
   const router = useRouter();
+  const acc = useAccounts().accounts;
+
 
   const load = useCallback(async () => {
-    setLoading(true);
-    const acc = await api.getAccountWithBalance(accountId);
-    setAccount(acc);
-    const txs = await api.listTransactions(accountId);
-    setTx(txs);
-    setLoading(false);
+    const ac = acc.find(it=>it.id === accountId);
+    setAccount(ac ?? null);
+    const txs = await g_accounts_tx(setLoading,accountId);
+    console.log(txs.data,'tttt');
+    setTx(txs as any);
   }, [accountId]);
 
 
@@ -101,7 +76,7 @@ export default function AccountDetailsScreen() {
           ListHeaderComponent={
             <View style={styles.headerBox}>
               <Text style={styles.title}>{account.name}</Text>
-              <Text style={styles.bigAmount}>{fmtMoney(account.balance, account.currency)}</Text>
+              <Text style={styles.bigAmount}>{fmtMoney(account.amountCents, account.currency)}</Text>
               <Text style={styles.muted}>{account.currency}</Text>
       <TouchableOpacity
         style={{
