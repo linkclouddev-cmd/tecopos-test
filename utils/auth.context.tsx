@@ -1,12 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
-import * as SplashScreen from 'expo-splash-screen';
 import { STORAGE_AUTH_KEY } from "@/constants/db";
-SplashScreen.preventAutoHideAsync();
 
 type auth_state = {
   is_logged:boolean;
-  log_in:(token:string)=>Promise<void>;
+  log_in:()=>Promise<void>;
   log_out:()=>Promise<void>;
   ready:boolean;
 };

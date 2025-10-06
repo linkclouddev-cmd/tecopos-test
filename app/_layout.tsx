@@ -6,7 +6,18 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <StatusBar style="dark" />
-      <Stack></Stack>
+      <Stack>
+        <Stack.Screen name='(protected)'
+        options={{
+          headerShown:false,
+          animation:"fade"
+        }}
+        />
+        <Stack.Screen name="(auth)" options={{
+          headerShown:false
+        }}/>
+        
+      </Stack>
     </AuthProvider>
   )
 }
